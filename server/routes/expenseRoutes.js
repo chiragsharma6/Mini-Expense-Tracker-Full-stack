@@ -48,4 +48,21 @@ router.post("/", (req, res) => {
   res.status(201).json(newExpense);
 });
 
+// DELETE expense
+router.delete("/:id", (req, res) => {
+  const { id } = req.params;
+
+  const expenses = getExpenses();
+
+  const updatedExpenses = expenses.filter(
+    (expense) => expense.id !== id
+  );
+
+  saveExpenses(updatedExpenses);
+
+  res.json({
+    message: "Expense deleted successfully"
+  });
+});
+
 module.exports = router;

@@ -12,5 +12,19 @@
     "category": "Food",
     "date": "2022-12-02",
     "note": "vh"
+  },
+  {
+    "id": "b3c4772a-db76-4af8-8303-4ae6464e574e",
+    "amount": "22",
+    "category": "Bills",
+    "date": "2321-02-02",
+    "note": ""
+  },
+  {
+    "id": "404d0448-ab15-4dc3-88ab-dd718c774d58",
+    "amount": "23",
+    "category": "Food",
+    "date": "1111-01-11",
+    "note": "111"
   }
 ]
