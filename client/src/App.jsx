@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import ExpenseForm from "./components/ExpenseForm";
 import ExpenseList from "./components/ExpenseList";
 import { getExpenses } from "./services/expenseService";
+import SummaryDashboard from "./components/SummaryDashboard";
 
 function App() {
   const [expenses, setExpenses] = useState([]);
@@ -18,6 +19,8 @@ function App() {
   return (
     <div>
       <h1>Expense Tracker</h1>
+
+      <SummaryDashboard expenses={expenses} />
 
       <ExpenseForm onExpenseAdded={fetchExpenses} />
 
