@@ -5,5 +5,12 @@
     "category": "Food",
     "date": "2025-06-05",
     "note": "Pizza"
+  },
+  {
+    "id": "859ec578-1e10-4106-bef0-1de3aa46259c",
+    "amount": "7",
+    "category": "Food",
+    "date": "2022-12-02",
+    "note": "vh"
   }
 ]
