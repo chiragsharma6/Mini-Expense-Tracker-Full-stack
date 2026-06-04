@@ -1,1 +1,9 @@
-[]
+[
+  {
+    "id": "fef43f1d-3f59-4310-a5f3-ce7b98fe50a8",
+    "amount": 250,
+    "category": "Food",
+    "date": "2025-06-05",
+    "note": "Pizza"
+  }
+]

@@ -1,10 +1,51 @@
 const express = require("express");
 const router = express.Router();
+const fs = require("fs");
+const path = require("path");
+const { v4: uuidv4 } = require("uuid");
 
-const expenses = require("../data/expenses.json");
+const filePath = path.join(__dirname, "../data/expenses.json");
 
+const getExpenses = () => {
+  const data = fs.readFileSync(filePath);
+  return JSON.parse(data);
+};
+
+const saveExpenses = (expenses) => {
+  fs.writeFileSync(filePath, JSON.stringify(expenses, null, 2));
+};
+
+// GET all expenses
 router.get("/", (req, res) => {
+  const expenses = getExpenses();
   res.json(expenses);
+});
+
+// POST new expense
+router.post("/", (req, res) => {
+  const { amount, category, date, note } = req.body;
+
+  if (!amount || !category || !date) {
+    return res.status(400).json({
+      message: "Amount, category and date are required"
+    });
+  }
+
+  const expenses = getExpenses();
+
+  const newExpense = {
+    id: uuidv4(),
+    amount,
+    category,
+    date,
+    note: note || ""
+  };
+
+  expenses.push(newExpense);
+
+  saveExpenses(expenses);
+
+  res.status(201).json(newExpense);
 });
 
 module.exports = router;
