@@ -48,6 +48,40 @@ router.post("/", (req, res) => {
   res.status(201).json(newExpense);
 });
 
+// UPDATE expense
+router.put("/:id", (req, res) => {
+  const { id } = req.params;
+  const { amount, category, date, note } = req.body;
+
+  if (!amount || !category || !date) {
+    return res.status(400).json({
+      message: "Amount, category and date are required"
+    });
+  }
+
+  const expenses = getExpenses();
+  const expenseIndex = expenses.findIndex((expense) => expense.id === id);
+
+  if (expenseIndex === -1) {
+    return res.status(404).json({
+      message: "Expense not found"
+    });
+  }
+
+  const updatedExpense = {
+    ...expenses[expenseIndex],
+    amount,
+    category,
+    date,
+    note: note || ""
+  };
+
+  expenses[expenseIndex] = updatedExpense;
+  saveExpenses(expenses);
+
+  res.json(updatedExpense);
+});
+
 // DELETE expense
 router.delete("/:id", (req, res) => {
   const { id } = req.params;

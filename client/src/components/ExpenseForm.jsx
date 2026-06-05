@@ -1,17 +1,40 @@
 import { useState } from "react";
-import { addExpense } from "../services/expenseService";
+import { addExpense, updateExpense } from "../services/expenseService";
 
 const categories = ["Food", "Transport", "Bills", "Entertainment", "Other"];
 
-function ExpenseForm({ onExpenseAdded }) {
-  const [formData, setFormData] = useState({
-    amount: "",
-    category: "",
-    date: "",
-    note: "",
-  });
+const emptyForm = {
+  amount: "",
+  category: "",
+  date: "",
+  note: "",
+};
+
+const getInitialFormData = (expense) => {
+  if (!expense) {
+    return emptyForm;
+  }
+
+  return {
+    amount: expense.amount,
+    category: expense.category,
+    date: expense.date,
+    note: expense.note || "",
+  };
+};
+
+function ExpenseForm({
+  editingExpense,
+  onCancelEdit,
+  onExpenseAdded,
+  onExpenseUpdated,
+}) {
+  const [formData, setFormData] = useState(() =>
+    getInitialFormData(editingExpense)
+  );
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
+  const isEditing = Boolean(editingExpense);
 
   const handleChange = (e) => {
     setFormData({
@@ -26,29 +49,35 @@ function ExpenseForm({ onExpenseAdded }) {
     setError("");
 
     try {
-      await addExpense(formData);
-      await onExpenseAdded();
+      if (isEditing) {
+        await updateExpense(editingExpense.id, formData);
+        await onExpenseUpdated();
+      } else {
+        await addExpense(formData);
+        await onExpenseAdded();
+      }
 
-      setFormData({
-        amount: "",
-        category: "",
-        date: "",
-        note: "",
-      });
+      setFormData(emptyForm);
     } catch (error) {
       console.error(error);
-      setError("Could not add this expense. Please check the details.");
+      setError("Could not save this expense. Please check the details.");
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const handleCancelEdit = () => {
+    setFormData(emptyForm);
+    setError("");
+    onCancelEdit();
   };
 
   return (
     <section className="panel form-panel">
       <div className="section-heading">
         <div>
-          <p className="eyebrow">New entry</p>
-          <h2>Add expense</h2>
+          <p className="eyebrow">{isEditing ? "Edit entry" : "New entry"}</p>
+          <h2>{isEditing ? "Update expense" : "Add expense"}</h2>
         </div>
       </div>
 
@@ -108,9 +137,25 @@ function ExpenseForm({ onExpenseAdded }) {
 
         {error && <p className="form-error">{error}</p>}
 
-        <button className="primary-button" type="submit" disabled={isSaving}>
-          {isSaving ? "Adding..." : "Add expense"}
-        </button>
+        <div className="form-actions">
+          <button className="primary-button" type="submit" disabled={isSaving}>
+            {isSaving
+              ? "Saving..."
+              : isEditing
+                ? "Update expense"
+                : "Add expense"}
+          </button>
+
+          {isEditing && (
+            <button
+              className="secondary-button"
+              onClick={handleCancelEdit}
+              type="button"
+            >
+              Cancel
+            </button>
+          )}
+        </div>
       </form>
     </section>
   );

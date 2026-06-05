@@ -9,6 +9,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [editingExpense, setEditingExpense] = useState(null);
 
   const fetchExpenses = async () => {
     try {
@@ -54,6 +55,13 @@ function App() {
     window.setTimeout(() => setNotice(""), 2200);
   };
 
+  const handleExpenseUpdated = async () => {
+    await fetchExpenses();
+    setEditingExpense(null);
+    setNotice("Expense updated");
+    window.setTimeout(() => setNotice(""), 2200);
+  };
+
   return (
     <main className="app-shell">
       <header className="hero">
@@ -77,11 +85,18 @@ function App() {
       <SummaryDashboard expenses={expenses} />
 
       <section className="workspace-grid">
-        <ExpenseForm onExpenseAdded={handleExpenseAdded} />
+        <ExpenseForm
+          key={editingExpense ? editingExpense.id : "new-expense"}
+          editingExpense={editingExpense}
+          onCancelEdit={() => setEditingExpense(null)}
+          onExpenseAdded={handleExpenseAdded}
+          onExpenseUpdated={handleExpenseUpdated}
+        />
         <ExpenseList
           expenses={expenses}
           isLoading={isLoading}
           onExpenseDeleted={fetchExpenses}
+          onExpenseEdit={setEditingExpense}
         />
       </section>
     </main>

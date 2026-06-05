@@ -16,7 +16,7 @@ const formatDate = (date) =>
       }).format(new Date(date))
     : "No date";
 
-function ExpenseList({ expenses, isLoading, onExpenseDeleted }) {
+function ExpenseList({ expenses, isLoading, onExpenseDeleted, onExpenseEdit }) {
   const handleDelete = async (id) => {
     try {
       await deleteExpense(id);
@@ -61,6 +61,13 @@ function ExpenseList({ expenses, isLoading, onExpenseDeleted }) {
               <div className="expense-actions">
                 <strong>{formatCurrency(expense.amount)}</strong>
               </div>
+              <button
+                className="secondary-button"
+                onClick={() => onExpenseEdit(expense)}
+                type="button"
+              >
+                Edit
+              </button>
               <button
                 className="ghost-button"
                 onClick={() => handleDelete(expense.id)}
