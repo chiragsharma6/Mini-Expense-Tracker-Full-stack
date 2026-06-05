@@ -121,13 +121,14 @@ function App() {
       <ExpensePieChart expenses={filteredExpenses} />
 
       <section className="workspace-grid">
+        
         <ExpenseForm
-          key={editingExpense ? editingExpense.id : "new-expense"}
-          editingExpense={editingExpense}
-          onCancelEdit={() => setEditingExpense(null)}
-          onExpenseAdded={handleExpenseAdded}
-          onExpenseUpdated={handleExpenseUpdated}
-        />
+  key={editingExpense ? editingExpense.id : "new-expense"}
+  editingExpense={editingExpense}
+  onCancelEdit={() => setEditingExpense(null)}
+  onExpenseAdded={handleExpenseAdded}
+  onExpenseUpdated={handleExpenseUpdated}
+/>
         <ExpenseList
           expenses={filteredExpenses}
           hasActiveFilters={Boolean(hasActiveFilters)}

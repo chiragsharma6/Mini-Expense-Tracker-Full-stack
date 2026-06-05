@@ -46,7 +46,6 @@ setFormData({
 const handleSubmit = async (e) => {
 e.preventDefault();
 
-```
 setError("");
 
 const amount = Number(formData.amount);
@@ -92,7 +91,7 @@ try {
 } finally {
   setIsSaving(false);
 }
-```
+
 
 };
 
