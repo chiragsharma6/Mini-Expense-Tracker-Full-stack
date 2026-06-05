@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { addExpense } from "../services/expenseService";
 
+const categories = ["Food", "Transport", "Bills", "Entertainment", "Other"];
+
 function ExpenseForm({ onExpenseAdded }) {
   const [formData, setFormData] = useState({
     amount: "",
@@ -8,6 +10,8 @@ function ExpenseForm({ onExpenseAdded }) {
     date: "",
     note: "",
   });
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     setFormData({
@@ -18,13 +22,12 @@ function ExpenseForm({ onExpenseAdded }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSaving(true);
+    setError("");
 
     try {
       await addExpense(formData);
-
-onExpenseAdded();
-
-alert("Expense Added Successfully!");
+      await onExpenseAdded();
 
       setFormData({
         amount: "",
@@ -34,57 +37,82 @@ alert("Expense Added Successfully!");
       });
     } catch (error) {
       console.error(error);
-      alert("Failed to add expense");
+      setError("Could not add this expense. Please check the details.");
+    } finally {
+      setIsSaving(false);
     }
   };
 
   return (
-    <div>
-      <h2>Add Expense</h2>
+    <section className="panel form-panel">
+      <div className="section-heading">
+        <div>
+          <p className="eyebrow">New entry</p>
+          <h2>Add expense</h2>
+        </div>
+      </div>
 
-      <form onSubmit={handleSubmit}>
-        <input
-          type="number"
-          name="amount"
-          placeholder="Amount"
-          value={formData.amount}
-          onChange={handleChange}
-          required
-        />
+      <form className="expense-form" onSubmit={handleSubmit}>
+        <label>
+          <span>Amount</span>
+          <input
+            type="number"
+            name="amount"
+            min="0"
+            step="0.01"
+            placeholder="2500"
+            value={formData.amount}
+            onChange={handleChange}
+            required
+          />
+        </label>
 
-        <select
-          name="category"
-          value={formData.category}
-          onChange={handleChange}
-          required
-        >
-          <option value="">Select Category</option>
-          <option value="Food">Food</option>
-          <option value="Transport">Transport</option>
-          <option value="Bills">Bills</option>
-          <option value="Entertainment">Entertainment</option>
-          <option value="Other">Other</option>
-        </select>
+        <label>
+          <span>Category</span>
+          <select
+            name="category"
+            value={formData.category}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select category</option>
+            {categories.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+        </label>
 
-        <input
-          type="date"
-          name="date"
-          value={formData.date}
-          onChange={handleChange}
-          required
-        />
+        <label>
+          <span>Date</span>
+          <input
+            type="date"
+            name="date"
+            value={formData.date}
+            onChange={handleChange}
+            required
+          />
+        </label>
 
-        <input
-          type="text"
-          name="note"
-          placeholder="Note"
-          value={formData.note}
-          onChange={handleChange}
-        />
+        <label className="form-wide">
+          <span>Note</span>
+          <input
+            type="text"
+            name="note"
+            placeholder="Dinner, cab, subscription..."
+            value={formData.note}
+            onChange={handleChange}
+          />
+        </label>
 
-        <button type="submit">Add Expense</button>
+        {error && <p className="form-error">{error}</p>}
+
+        <button className="primary-button" type="submit" disabled={isSaving}>
+          {isSaving ? "Adding..." : "Add expense"}
+        </button>
       </form>
-    </div>
+    </section>
   );
 }
 

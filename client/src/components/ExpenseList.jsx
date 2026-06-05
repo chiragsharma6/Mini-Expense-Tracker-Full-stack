@@ -1,6 +1,22 @@
 import { deleteExpense } from "../services/expenseService";
 
-function ExpenseList({ expenses, onExpenseDeleted }) {
+const formatCurrency = (amount) =>
+  new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(Number(amount) || 0);
+
+const formatDate = (date) =>
+  date
+    ? new Intl.DateTimeFormat("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      }).format(new Date(date))
+    : "No date";
+
+function ExpenseList({ expenses, isLoading, onExpenseDeleted }) {
   const handleDelete = async (id) => {
     try {
       await deleteExpense(id);
@@ -12,20 +28,43 @@ function ExpenseList({ expenses, onExpenseDeleted }) {
   };
 
   return (
-    <div>
-      <h2>Expenses</h2>
+    <section className="panel list-panel">
+      <div className="section-heading">
+        <div>
+          <p className="eyebrow">Recent activity</p>
+          <h2>Expenses</h2>
+        </div>
+        <span className="count-pill">{expenses.length}</span>
+      </div>
 
-      {expenses.length === 0 ? (
-        <p>No expenses found</p>
+      {isLoading ? (
+        <div className="empty-state">Loading expenses...</div>
+      ) : expenses.length === 0 ? (
+        <div className="empty-state">
+          <strong>No expenses yet</strong>
+          <span>Add your first expense to start seeing trends.</span>
+        </div>
       ) : (
-        <ul>
+        <ul className="expense-list">
           {expenses.map((expense) => (
-            <li key={expense.id}>
-              ₹{expense.amount} | {expense.category} | {expense.date} | {expense.note}
-
+            <li className="expense-row" key={expense.id}>
+              <div className="category-mark" aria-hidden="true">
+                {expense.category.slice(0, 1)}
+              </div>
+              <div className="expense-main">
+                <div>
+                  <strong>{expense.category}</strong>
+                  <span>{expense.note || "No note added"}</span>
+                </div>
+                <small>{formatDate(expense.date)}</small>
+              </div>
+              <div className="expense-actions">
+                <strong>{formatCurrency(expense.amount)}</strong>
+              </div>
               <button
+                className="ghost-button"
                 onClick={() => handleDelete(expense.id)}
-                style={{ marginLeft: "10px" }}
+                type="button"
               >
                 Delete
               </button>
@@ -33,7 +72,7 @@ function ExpenseList({ expenses, onExpenseDeleted }) {
           ))}
         </ul>
       )}
-    </div>
+    </section>
   );
 }
 

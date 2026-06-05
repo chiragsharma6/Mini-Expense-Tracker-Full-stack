@@ -6,29 +6,85 @@ import SummaryDashboard from "./components/SummaryDashboard";
 
 function App() {
   const [expenses, setExpenses] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
 
   const fetchExpenses = async () => {
-    const data = await getExpenses();
-    setExpenses(data);
+    try {
+      const data = await getExpenses();
+      setExpenses(data);
+      setError("");
+    } catch (err) {
+      console.error(err);
+      setError("Unable to load expenses. Make sure the server is running.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
-    fetchExpenses();
+    let isMounted = true;
+
+    getExpenses()
+      .then((data) => {
+        if (!isMounted) return;
+        setExpenses(data);
+        setError("");
+      })
+      .catch((err) => {
+        if (!isMounted) return;
+        console.error(err);
+        setError("Unable to load expenses. Make sure the server is running.");
+      })
+      .finally(() => {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
+  const handleExpenseAdded = async () => {
+    await fetchExpenses();
+    setNotice("Expense added");
+    window.setTimeout(() => setNotice(""), 2200);
+  };
+
   return (
-    <div>
-      <h1>Expense Tracker</h1>
+    <main className="app-shell">
+      <header className="hero">
+        <div>
+          <p className="eyebrow">Personal finance</p>
+          <h1>Expense Tracker</h1>
+          <p className="hero-copy">
+            Track daily spending, see category pressure, and keep recent
+            transactions tidy.
+          </p>
+        </div>
+        <div className="hero-badge" aria-label={`${expenses.length} recorded expenses`}>
+          <span>{expenses.length}</span>
+          <small>records</small>
+        </div>
+      </header>
+
+      {notice && <div className="notice">{notice}</div>}
+      {error && <div className="notice notice-error">{error}</div>}
 
       <SummaryDashboard expenses={expenses} />
 
-      <ExpenseForm onExpenseAdded={fetchExpenses} />
-
-      <ExpenseList
-  expenses={expenses}
-  onExpenseDeleted={fetchExpenses}
-/>
-    </div>
+      <section className="workspace-grid">
+        <ExpenseForm onExpenseAdded={handleExpenseAdded} />
+        <ExpenseList
+          expenses={expenses}
+          isLoading={isLoading}
+          onExpenseDeleted={fetchExpenses}
+        />
+      </section>
+    </main>
   );
 }
 

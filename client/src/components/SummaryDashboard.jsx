@@ -18,28 +18,77 @@ function SummaryDashboard({ expenses }) {
     return totals;
   }, {});
 
+  const averageExpense = expenses.length > 0 ? totalSpent / expenses.length : 0;
+  const sortedCategories = Object.entries(categoryTotals).sort(
+    ([, totalA], [, totalB]) => totalB - totalA
+  );
+  const topCategory = sortedCategories[0]?.[0] || "None";
+  const maxCategoryTotal = Math.max(...Object.values(categoryTotals), 0);
+
+  const formatCurrency = (amount) =>
+    new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      maximumFractionDigits: 0,
+    }).format(amount || 0);
+
   return (
-    <div>
-      <h2>Summary Dashboard</h2>
+    <section className="summary-section">
+      <div className="stat-grid">
+        <article className="stat-card stat-card-primary">
+          <span>Total spent</span>
+          <strong>{formatCurrency(totalSpent)}</strong>
+          <small>Across {expenses.length} expenses</small>
+        </article>
+        <article className="stat-card">
+          <span>Highest expense</span>
+          <strong>{formatCurrency(highestExpense)}</strong>
+          <small>Largest single transaction</small>
+        </article>
+        <article className="stat-card">
+          <span>Average spend</span>
+          <strong>{formatCurrency(averageExpense)}</strong>
+          <small>Per recorded expense</small>
+        </article>
+        <article className="stat-card">
+          <span>Top category</span>
+          <strong>{topCategory}</strong>
+          <small>Highest category total</small>
+        </article>
+      </div>
 
-      <p>
-        <strong>Total Spent:</strong> ₹{totalSpent}
-      </p>
+      <div className="panel category-panel">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">Breakdown</p>
+            <h2>Category totals</h2>
+          </div>
+        </div>
 
-      <p>
-        <strong>Highest Expense:</strong> ₹{highestExpense}
-      </p>
-
-      <h3>Category Totals</h3>
-
-      <ul>
-        {Object.entries(categoryTotals).map(([category, total]) => (
-          <li key={category}>
-            {category}: ₹{total}
-          </li>
-        ))}
-      </ul>
-    </div>
+        {sortedCategories.length === 0 ? (
+          <div className="empty-state compact">No category data yet</div>
+        ) : (
+          <div className="category-list">
+            {sortedCategories.map(([category, total]) => (
+              <div className="category-item" key={category}>
+                <div className="category-label">
+                  <strong>{category}</strong>
+                  <span>{formatCurrency(total)}</span>
+                </div>
+                <div className="progress-track">
+                  <div
+                    className="progress-fill"
+                    style={{
+                      width: `${Math.max((total / maxCategoryTotal) * 100, 8)}%`,
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
   );
 }
 
