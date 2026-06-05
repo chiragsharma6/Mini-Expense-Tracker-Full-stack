@@ -16,7 +16,13 @@ const formatDate = (date) =>
       }).format(new Date(date))
     : "No date";
 
-function ExpenseList({ expenses, isLoading, onExpenseDeleted, onExpenseEdit }) {
+function ExpenseList({
+  expenses,
+  hasActiveFilters,
+  isLoading,
+  onExpenseDeleted,
+  onExpenseEdit,
+}) {
   const handleDelete = async (id) => {
     try {
       await deleteExpense(id);
@@ -41,8 +47,14 @@ function ExpenseList({ expenses, isLoading, onExpenseDeleted, onExpenseEdit }) {
         <div className="empty-state">Loading expenses...</div>
       ) : expenses.length === 0 ? (
         <div className="empty-state">
-          <strong>No expenses yet</strong>
-          <span>Add your first expense to start seeing trends.</span>
+          <strong>
+            {hasActiveFilters ? "No matching expenses" : "No expenses yet"}
+          </strong>
+          <span>
+            {hasActiveFilters
+              ? "Try changing or clearing your filters."
+              : "Add your first expense to start seeing trends."}
+          </span>
         </div>
       ) : (
         <ul className="expense-list">

@@ -1,8 +1,15 @@
 import { useEffect, useState } from "react";
 import ExpenseForm from "./components/ExpenseForm";
+import ExpenseFilters from "./components/ExpenseFilters";
 import ExpenseList from "./components/ExpenseList";
 import { getExpenses } from "./services/expenseService";
 import SummaryDashboard from "./components/SummaryDashboard";
+
+const emptyFilters = {
+  category: "",
+  startDate: "",
+  endDate: "",
+};
 
 function App() {
   const [expenses, setExpenses] = useState([]);
@@ -10,6 +17,18 @@ function App() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [editingExpense, setEditingExpense] = useState(null);
+  const [filters, setFilters] = useState(emptyFilters);
+  const hasActiveFilters = filters.category || filters.startDate || filters.endDate;
+
+  const filteredExpenses = expenses.filter((expense) => {
+    const matchesCategory =
+      !filters.category || expense.category === filters.category;
+    const matchesStartDate =
+      !filters.startDate || expense.date >= filters.startDate;
+    const matchesEndDate = !filters.endDate || expense.date <= filters.endDate;
+
+    return matchesCategory && matchesStartDate && matchesEndDate;
+  });
 
   const fetchExpenses = async () => {
     try {
@@ -62,6 +81,13 @@ function App() {
     window.setTimeout(() => setNotice(""), 2200);
   };
 
+  const handleFilterChange = (e) => {
+    setFilters({
+      ...filters,
+      [e.target.name]: e.target.value,
+    });
+  };
+
   return (
     <main className="app-shell">
       <header className="hero">
@@ -82,7 +108,15 @@ function App() {
       {notice && <div className="notice">{notice}</div>}
       {error && <div className="notice notice-error">{error}</div>}
 
-      <SummaryDashboard expenses={expenses} />
+      <ExpenseFilters
+        filters={filters}
+        filteredCount={filteredExpenses.length}
+        totalCount={expenses.length}
+        onClearFilters={() => setFilters(emptyFilters)}
+        onFilterChange={handleFilterChange}
+      />
+
+      <SummaryDashboard expenses={filteredExpenses} />
 
       <section className="workspace-grid">
         <ExpenseForm
@@ -93,7 +127,8 @@ function App() {
           onExpenseUpdated={handleExpenseUpdated}
         />
         <ExpenseList
-          expenses={expenses}
+          expenses={filteredExpenses}
+          hasActiveFilters={Boolean(hasActiveFilters)}
           isLoading={isLoading}
           onExpenseDeleted={fetchExpenses}
           onExpenseEdit={setEditingExpense}

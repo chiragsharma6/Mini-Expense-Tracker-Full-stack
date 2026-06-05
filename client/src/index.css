@@ -149,6 +149,49 @@ h2 {
   margin-bottom: 18px;
 }
 
+.filters-panel {
+  margin-bottom: 18px;
+}
+
+.filters-heading {
+  margin-bottom: 16px;
+}
+
+.filter-result {
+  align-items: center;
+  background: var(--accent-soft);
+  border-radius: 999px;
+  color: var(--accent-strong);
+  display: inline-flex;
+  font-size: 0.9rem;
+  font-weight: 850;
+  min-height: 34px;
+  padding: 0 12px;
+  white-space: nowrap;
+}
+
+.filters-grid {
+  align-items: end;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: minmax(180px, 1.2fr) repeat(2, minmax(160px, 1fr)) auto;
+}
+
+.filters-grid label {
+  display: grid;
+  gap: 8px;
+}
+
+.filters-grid label span {
+  color: var(--text-strong);
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.clear-filter-button {
+  min-width: 92px;
+}
+
 .stat-grid {
   display: grid;
   gap: 14px;
@@ -473,8 +516,13 @@ select:focus {
   }
 
   .stat-grid,
+  .filters-grid,
   .workspace-grid {
     grid-template-columns: 1fr;
+  }
+
+  .clear-filter-button {
+    width: 100%;
   }
 }
 
