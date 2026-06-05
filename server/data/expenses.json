@@ -19,5 +19,12 @@
     "category": "Food",
     "date": "2222-02-22",
     "note": "3w"
+  },
+  {
+    "id": "affe8d8c-ce02-4397-8ee8-6034a5a071b7",
+    "amount": "0",
+    "category": "Bills",
+    "date": "8888-08-07",
+    "note": ""
   }
 ]
