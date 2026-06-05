@@ -4,7 +4,7 @@ import ExpenseFilters from "./components/ExpenseFilters";
 import ExpenseList from "./components/ExpenseList";
 import { getExpenses } from "./services/expenseService";
 import SummaryDashboard from "./components/SummaryDashboard";
-
+import ExpensePieChart from "./components/ExpensePieChart";
 const emptyFilters = {
   category: "",
   startDate: "",
@@ -117,6 +117,8 @@ function App() {
       />
 
       <SummaryDashboard expenses={filteredExpenses} />
+
+      <ExpensePieChart expenses={filteredExpenses} />
 
       <section className="workspace-grid">
         <ExpenseForm
