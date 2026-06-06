@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import ExpenseForm from "./components/ExpenseForm";
 import ExpenseFilters from "./components/ExpenseFilters";
 import ExpenseList from "./components/ExpenseList";
@@ -28,6 +28,50 @@ function App() {
   const [editingExpense, setEditingExpense] = useState(null);
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
   const [currentCurrency, setCurrentCurrency] = useState("INR");
+  const followerRef = useRef(null);
+
+  useEffect(() => {
+    const follower = followerRef.current;
+    if (!follower) return;
+    const circle = follower.querySelector(".cursor-follower-circle");
+    if (!circle) return;
+
+    const handleMouseMove = (e) => {
+      const x = e.clientX;
+      const y = e.clientY;
+      follower.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+
+      const target = e.target;
+      if (target) {
+        const isOverCard = target.closest(
+          ".panel, .stat-card, .hero, .hero-badge, .navbar-sticky, .app-footer, .scroll-indicator, button, input, select, a"
+        );
+        if (isOverCard) {
+          circle.classList.add("hidden");
+        } else {
+          circle.classList.remove("hidden");
+        }
+      }
+    };
+
+    const handleMouseLeave = () => {
+      circle.classList.add("hidden");
+    };
+
+    const handleMouseEnter = () => {
+      circle.classList.remove("hidden");
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseleave", handleMouseLeave);
+    document.addEventListener("mouseenter", handleMouseEnter);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseleave", handleMouseLeave);
+      document.removeEventListener("mouseenter", handleMouseEnter);
+    };
+  }, []);
   
   const [filters, setFilters] = useState(emptyFilters);
 
@@ -149,6 +193,9 @@ function App() {
   return (
     <>
       <Navbar />
+      <div ref={followerRef} className="cursor-follower-wrapper">
+        <div className="cursor-follower-circle hidden" />
+      </div>
       <main className="app-shell">
         <div className="first-page">
         <header className="hero">

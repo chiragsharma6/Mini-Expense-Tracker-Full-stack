@@ -5,5 +5,19 @@
     "category": "Transport",
     "date": "2026-06-05",
     "note": ""
+  },
+  {
+    "id": "80db18c3-a2ef-452e-b856-904b853ab189",
+    "amount": 99.999,
+    "category": "Bills",
+    "date": "2026-06-04",
+    "note": ""
+  },
+  {
+    "id": "d346165d-4b34-41b0-98fd-f7054e51f341",
+    "amount": 199.998,
+    "category": "Transport",
+    "date": "2026-06-02",
+    "note": ""
   }
 ]
