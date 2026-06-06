@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { addExpense, updateExpense } from "../services/expenseService";
 
 const categories = ["Food", "Transport", "Bills", "Entertainment", "Other"];
@@ -23,11 +23,19 @@ note: expense.note || "",
 };
 };
 
+const EXCHANGE_RATES = {
+  INR: 1.0,
+  USD: 83.0,
+  EUR: 90.0,
+};
+
 function ExpenseForm({
-editingExpense,
-onCancelEdit,
-onExpenseAdded,
-onExpenseUpdated,
+  editingExpense,
+  onCancelEdit,
+  onExpenseAdded,
+  onExpenseUpdated,
+  currency = "INR",
+  onCurrencyChange,
 }) {
 const [formData, setFormData] = useState(() =>
 getInitialFormData(editingExpense)
@@ -35,6 +43,26 @@ getInitialFormData(editingExpense)
 const [isSaving, setIsSaving] = useState(false);
 const [error, setError] = useState("");
 const isEditing = Boolean(editingExpense);
+
+const prevCurrencyRef = useRef(currency);
+
+useEffect(() => {
+  const prevCurrency = prevCurrencyRef.current;
+  if (prevCurrency !== currency) {
+    if (formData.amount && !isNaN(Number(formData.amount))) {
+      const rateOld = EXCHANGE_RATES[prevCurrency];
+      const rateNew = EXCHANGE_RATES[currency];
+      const amountInINR = Number(formData.amount) * rateOld;
+      const decimals = currency === "INR" ? 0 : 2;
+      const convertedAmount = Number((amountInINR / rateNew).toFixed(decimals));
+      setFormData((prev) => ({
+        ...prev,
+        amount: String(convertedAmount),
+      }));
+    }
+    prevCurrencyRef.current = currency;
+  }
+}, [currency, formData.amount]);
 
 const handleChange = (e) => {
 setFormData({
@@ -101,7 +129,42 @@ setError("");
 onCancelEdit();
 };
 
-return ( <section className="panel form-panel"> <div className="section-heading"> <div> <p className="eyebrow">{isEditing ? "Edit entry" : "New entry"}</p> <h2>{isEditing ? "Update expense" : "Add expense"}</h2> </div> </div>
+return (
+  <section className="panel form-panel">
+    <div className="section-heading">
+      <div>
+        <p className="eyebrow">{isEditing ? "Edit entry" : "New entry"}</p>
+        <h2>{isEditing ? "Update expense" : "Add expense"}</h2>
+      </div>
+      {!isEditing && onCurrencyChange && (
+        <div className="currency-selector" aria-label="Select currency">
+          <button
+            type="button"
+            className={`currency-btn ${currency === "INR" ? "active" : ""}`}
+            onClick={() => onCurrencyChange("INR")}
+            title="Rupees"
+          >
+            ₹
+          </button>
+          <button
+            type="button"
+            className={`currency-btn ${currency === "USD" ? "active" : ""}`}
+            onClick={() => onCurrencyChange("USD")}
+            title="Dollars"
+          >
+            $
+          </button>
+          <button
+            type="button"
+            className={`currency-btn ${currency === "EUR" ? "active" : ""}`}
+            onClick={() => onCurrencyChange("EUR")}
+            title="Euros"
+          >
+            €
+          </button>
+        </div>
+      )}
+    </div>
 
   <form className="expense-form" onSubmit={handleSubmit}>
     <label>

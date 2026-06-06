@@ -1,4 +1,4 @@
-function CategoryBreakdown({ expenses }) {
+function CategoryBreakdown({ expenses, currency = "INR" }) {
   const categoryTotals = expenses.reduce((totals, expense) => {
     const category = expense.category;
     totals[category] = (totals[category] || 0) + Number(expense.amount);
@@ -10,12 +10,16 @@ function CategoryBreakdown({ expenses }) {
   );
   const maxCategoryTotal = Math.max(...Object.values(categoryTotals), 0);
 
-  const formatCurrency = (amount) =>
-    new Intl.NumberFormat("en-IN", {
+  const formatCurrency = (amount) => {
+    let locale = "en-IN";
+    if (currency === "USD") locale = "en-US";
+    else if (currency === "EUR") locale = "de-DE";
+    return new Intl.NumberFormat(locale, {
       style: "currency",
-      currency: "INR",
+      currency: currency,
       maximumFractionDigits: 0,
     }).format(amount || 0);
+  };
 
   return (
     <div className="panel category-panel">

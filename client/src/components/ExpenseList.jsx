@@ -1,12 +1,5 @@
 import { deleteExpense } from "../services/expenseService";
 
-const formatCurrency = (amount) =>
-  new Intl.NumberFormat("en-IN", {
-    style: "currency",
-    currency: "INR",
-    maximumFractionDigits: 0,
-  }).format(Number(amount) || 0);
-
 const formatDate = (date) =>
   date
     ? new Intl.DateTimeFormat("en-IN", {
@@ -22,7 +15,18 @@ function ExpenseList({
   isLoading,
   onExpenseDeleted,
   onExpenseEdit,
+  currency = "INR",
 }) {
+  const formatCurrency = (amount) => {
+    let locale = "en-IN";
+    if (currency === "USD") locale = "en-US";
+    else if (currency === "EUR") locale = "de-DE";
+    return new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency: currency,
+      maximumFractionDigits: 0,
+    }).format(Number(amount) || 0);
+  };
   const handleDelete = async (id) => {
     try {
       await deleteExpense(id);

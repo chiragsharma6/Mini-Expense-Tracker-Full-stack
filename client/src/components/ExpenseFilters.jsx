@@ -64,6 +64,14 @@ function ExpenseFilters({ filters, filteredCount, totalCount, onFilterChange, on
           Clear
         </button>
       </div>
+
+      <div className="filters-illustration-container">
+        <img
+          src="/mockup.png"
+          alt="Mockup of EXPENDEE on smartphone and laptop"
+          className="filters-illustration"
+        />
+      </div>
     </section>
   );
 }

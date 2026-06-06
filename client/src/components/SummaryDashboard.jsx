@@ -1,4 +1,4 @@
-function SummaryDashboard({ expenses }) {
+function SummaryDashboard({ expenses, currency = "INR" }) {
   const currentDate = new Date();
 
   const currentMonthExpenses = expenses.filter((expense) => {
@@ -37,12 +37,16 @@ function SummaryDashboard({ expenses }) {
   );
   const topCategory = sortedCategories[0]?.[0] || "None";
 
-  const formatCurrency = (amount) =>
-    new Intl.NumberFormat("en-IN", {
+  const formatCurrency = (amount) => {
+    let locale = "en-IN";
+    if (currency === "USD") locale = "en-US";
+    else if (currency === "EUR") locale = "de-DE";
+    return new Intl.NumberFormat(locale, {
       style: "currency",
-      currency: "INR",
+      currency: currency,
       maximumFractionDigits: 0,
     }).format(amount || 0);
+  };
 
   return (
     <div className="stat-grid">

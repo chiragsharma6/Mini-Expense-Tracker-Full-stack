@@ -1,23 +1,9 @@
 [
   {
-    "id": "2560e07d-cb0d-40c2-8a20-915b53e983c2",
-    "amount": "120",
-    "category": "Bills",
-    "date": "2026-06-06",
-    "note": ""
-  },
-  {
-    "id": "3a8d84e3-701c-4feb-98b2-d2b47c07e87d",
-    "amount": "140",
-    "category": "Food",
-    "date": "2026-06-05",
-    "note": ""
-  },
-  {
-    "id": "591894d8-06c2-4c35-a6bc-c61e606eab45",
-    "amount": "150",
+    "id": "afbce6cf-d78c-40ae-bc1d-c50ad2a8ffa5",
+    "amount": 90,
     "category": "Transport",
-    "date": "2026-06-04",
+    "date": "2026-06-05",
     "note": ""
   }
 ]
