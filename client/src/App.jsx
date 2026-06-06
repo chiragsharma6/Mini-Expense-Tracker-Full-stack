@@ -5,6 +5,9 @@ import ExpenseList from "./components/ExpenseList";
 import { getExpenses } from "./services/expenseService";
 import SummaryDashboard from "./components/SummaryDashboard";
 import ExpensePieChart from "./components/ExpensePieChart";
+import CategoryBreakdown from "./components/CategoryBreakdown";
+import Footer from "./components/Footer";
+import Navbar from "./components/Navbar";
 const emptyFilters = {
   category: "",
   startDate: "",
@@ -17,6 +20,7 @@ function App() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [editingExpense, setEditingExpense] = useState(null);
+  
   const [filters, setFilters] = useState(emptyFilters);
   const hasActiveFilters = filters.category || filters.startDate || filters.endDate;
 
@@ -89,14 +93,15 @@ function App() {
   };
 
   return (
-    <main className="app-shell">
+    <>
+      <Navbar />
+      <main className="app-shell">
       <header className="hero">
         <div>
           <p className="eyebrow">Personal finance</p>
-          <h1>Expense Tracker</h1>
+          <h1 className="brand-title">EXPENDEE</h1>
           <p className="hero-copy">
-            Track daily spending, see category pressure, and keep recent
-            transactions tidy.
+            Expense Tracker — Spend smarter. Save better. Grow faster.
           </p>
         </div>
         <div className="hero-badge" aria-label={`${expenses.length} recorded expenses`}>
@@ -118,26 +123,30 @@ function App() {
 
       <SummaryDashboard expenses={filteredExpenses} />
 
-      <ExpensePieChart expenses={filteredExpenses} />
-
-      <section className="workspace-grid">
-        
+      <div className="side-by-side-grid">
         <ExpenseForm
-  key={editingExpense ? editingExpense.id : "new-expense"}
-  editingExpense={editingExpense}
-  onCancelEdit={() => setEditingExpense(null)}
-  onExpenseAdded={handleExpenseAdded}
-  onExpenseUpdated={handleExpenseUpdated}
-/>
-        <ExpenseList
-          expenses={filteredExpenses}
-          hasActiveFilters={Boolean(hasActiveFilters)}
-          isLoading={isLoading}
-          onExpenseDeleted={fetchExpenses}
-          onExpenseEdit={setEditingExpense}
+          key={editingExpense ? editingExpense.id : "new-expense"}
+          editingExpense={editingExpense}
+          onCancelEdit={() => setEditingExpense(null)}
+          onExpenseAdded={handleExpenseAdded}
+          onExpenseUpdated={handleExpenseUpdated}
         />
-      </section>
+        <ExpensePieChart expenses={filteredExpenses} />
+      </div>
+
+      <CategoryBreakdown expenses={filteredExpenses} />
+
+      <ExpenseList
+        expenses={filteredExpenses}
+        hasActiveFilters={Boolean(hasActiveFilters)}
+        isLoading={isLoading}
+        onExpenseDeleted={fetchExpenses}
+        onExpenseEdit={setEditingExpense}
+      />
+
+      <Footer />
     </main>
+    </>
   );
 }
 

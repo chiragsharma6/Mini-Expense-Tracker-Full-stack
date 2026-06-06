@@ -29,18 +29,31 @@ function ExpensePieChart({ expenses }) {
         data: Object.values(categoryTotals),
 
         backgroundColor: [
-          "#6366f1",
-          "#22c55e",
-          "#f97316",
-          "#ef4444",
-          "#06b6d4",
+          "#2563eb", // Sapphire Blue
+          "#d97706", // Amber Gold
+          "#7c3aed", // Royal Purple
+          "#0891b2", // Ocean Cyan
+          "#4f46e5", // Electric Indigo
         ],
       },
     ],
   };
 
   if (expenses.length === 0) {
-    return null;
+    return (
+      <div className="panel chart-panel">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">Insights</p>
+            <h2>Expense Distribution</h2>
+          </div>
+        </div>
+        <div className="empty-state compact" style={{ minHeight: "220px", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+          <strong>No expense data yet</strong>
+          <span>Add some transactions to see your spending breakdown.</span>
+        </div>
+      </div>
+    );
   }
 
   return (
