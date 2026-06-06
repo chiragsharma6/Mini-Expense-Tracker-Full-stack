@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5001/expenses";
+const API_URL =
+  "https://mini-expense-tracker-full-stack.onrender.com/expenses";
 
 export const getExpenses = async () => {
   const response = await axios.get(API_URL);
