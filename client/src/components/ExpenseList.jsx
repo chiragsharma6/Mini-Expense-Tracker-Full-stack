@@ -33,6 +33,39 @@ function ExpenseList({
     }
   };
 
+  const handleExportCSV = () => {
+    if (expenses.length === 0) {
+      alert("add expenses to download");
+      return;
+    }
+
+    const headers = ["ID", "Category", "Amount", "Date", "Note"];
+    const csvRows = [headers.join(",")];
+
+    expenses.forEach((expense) => {
+      const row = [
+        expense.id,
+        expense.category,
+        expense.amount,
+        expense.date,
+        (expense.note || "").replace(/"/g, '""'),
+      ];
+      csvRows.push(row.map(field => `"${field}"`).join(","));
+    });
+
+    const csvString = csvRows.join("\n");
+    const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `expenses_${new Date().toISOString().split("T")[0]}.csv`);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <section className="panel list-panel">
       <div className="section-heading">
@@ -40,7 +73,38 @@ function ExpenseList({
           <p className="eyebrow">Recent activity</p>
           <h2>Expenses</h2>
         </div>
-        <span className="count-pill">{expenses.length}</span>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <button
+            className="secondary-button"
+            onClick={handleExportCSV}
+            type="button"
+            style={{
+              minHeight: "34px",
+              padding: "0 12px",
+              fontSize: "0.85rem",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "6px"
+            }}
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            Export
+          </button>
+          <span className="count-pill">{expenses.length}</span>
+        </div>
       </div>
 
       {isLoading ? (

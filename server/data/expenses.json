@@ -1,44 +1,23 @@
 [
   {
-    "id": "4ff24390-dc45-42ee-9e71-cb745d9e19be",
-    "amount": "250",
-    "category": "Food",
-    "date": "2026-06-02",
-    "note": "pizza hut"
-  },
-  {
-    "id": "f3502a54-f63e-40be-8cc3-35fc7206fcca",
+    "id": "2560e07d-cb0d-40c2-8a20-915b53e983c2",
     "amount": "120",
-    "category": "Transport",
-    "date": "2026-06-03",
-    "note": ""
-  },
-  {
-    "id": "5145bf32-d56e-4243-8c2c-48c663c6ea3f",
-    "amount": "899",
     "category": "Bills",
-    "date": "2026-06-04",
-    "note": ""
-  },
-  {
-    "id": "7e074601-1d97-4124-9040-20d3e6c5abd9",
-    "amount": "180",
-    "category": "Food",
     "date": "2026-06-06",
     "note": ""
   },
   {
-    "id": "4b1b5110-b1af-4212-884d-9002e56d3995",
-    "amount": "123",
-    "category": "Entertainment",
-    "date": "2026-02-02",
+    "id": "3a8d84e3-701c-4feb-98b2-d2b47c07e87d",
+    "amount": "140",
+    "category": "Food",
+    "date": "2026-06-05",
     "note": ""
   },
   {
-    "id": "7ca809f0-21aa-4623-97b6-064237e0939e",
-    "amount": "123",
-    "category": "Food",
-    "date": "2026-03-12",
+    "id": "591894d8-06c2-4c35-a6bc-c61e606eab45",
+    "amount": "150",
+    "category": "Transport",
+    "date": "2026-06-04",
     "note": ""
   }
 ]

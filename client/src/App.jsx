@@ -32,7 +32,7 @@ function App() {
     const matchesEndDate = !filters.endDate || expense.date <= filters.endDate;
 
     return matchesCategory && matchesStartDate && matchesEndDate;
-  });
+  }).sort((a, b) => b.date.localeCompare(a.date));
 
   const fetchExpenses = async () => {
     try {
