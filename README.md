@@ -51,7 +51,7 @@ https://mini-expense-tracker-full-stack.vercel.app/
 
 ### Why These Tools?
 
-React provides reusable UI components, Express offers a lightweight backend for REST APIs, Axios simplifies API calls, and Recharts provides easy-to-read visual analytics for expenses.
+React provides reusable UI components, Express offers a lightweight backend for REST APIs, Axios simplifies API calls, and Chart.js provides easy-to-read visual analytics for expenses.
 
 ---
 
