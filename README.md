@@ -4,6 +4,23 @@ A modern full-stack expense tracking application built using React and Node.js t
 
 Built as part of the Studio Graphene Full Stack Developer Assessment (Exercise 2 – Mini Expense Tracker).
 ---
+## 📸 Application Preview
+
+### Dashboard Overview
+
+![Dashboard](./dashboard.png)
+
+### Analytics & Insights
+
+![Analytics](./analytics.png)
+
+### Filters
+
+![Filters](./filters.png)
+
+### Recent Activity
+
+![Recent Activity](./bottom.png)
 
 ## Live Demo Links
 
