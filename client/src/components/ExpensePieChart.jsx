@@ -14,7 +14,8 @@ ChartJS.register(
 );
 
 function ExpensePieChart({ expenses }) {
-  const categoryTotals = expenses.reduce((acc, expense) => {
+  const expenseOnly = expenses.filter((item) => item.type === "expense");
+  const categoryTotals = expenseOnly.reduce((acc, expense) => {
     acc[expense.category] =
       (acc[expense.category] || 0) + Number(expense.amount);
 

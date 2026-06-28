@@ -5,7 +5,7 @@ import ExpenseList from "./components/ExpenseList";
 import { getExpenses } from "./services/expenseService";
 import SummaryDashboard from "./components/SummaryDashboard";
 import ExpensePieChart from "./components/ExpensePieChart";
-import CategoryBreakdown from "./components/CategoryBreakdown";
+import MonthlyBudget from "./components/MonthlyBudget";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 
@@ -209,7 +209,7 @@ function App() {
           onExpenseUpdated={handleExpenseUpdated}
         />
 
-        <SummaryDashboard expenses={filteredExpenses} />
+        <SummaryDashboard expenses={expenses} />
 
         <div className={`scroll-indicator ${!showScrollIndicator ? "scroll-indicator-hidden" : ""}`}>
           <span>Scroll down for insights & activity</span>
@@ -230,7 +230,7 @@ function App() {
         <ExpensePieChart expenses={filteredExpenses} />
       </div>
 
-      <CategoryBreakdown expenses={filteredExpenses} />
+      <MonthlyBudget expenses={expenses} />
 
       <ExpenseList
         expenses={filteredExpenses}

@@ -1,14 +1,17 @@
-const categories = ["Food", "Transport", "Bills", "Entertainment", "Other"];
+const allCategories = [
+  "Food", "Transport", "Bills", "Entertainment", "Other",
+  "Salary", "Freelancing", "Bonus", "Investment"
+];
 
 function ExpenseFilters({ filters, filteredCount, totalCount, onFilterChange, onClearFilters }) {
-  const hasFilters = filters.category || filters.startDate || filters.endDate;
+  const hasFilters = filters.type || filters.category || filters.startDate || filters.endDate;
 
   return (
     <section className="panel filters-panel">
       <div className="section-heading filters-heading">
         <div>
           <p className="eyebrow">Filters</p>
-          <h2>Find expenses</h2>
+          <h2>Find transactions</h2>
         </div>
         <span className="filter-result">
           {filteredCount} of {totalCount}
@@ -16,6 +19,20 @@ function ExpenseFilters({ filters, filteredCount, totalCount, onFilterChange, on
       </div>
 
       <div className="filters-grid">
+        <label>
+          <span>Type</span>
+          <select
+            name="type"
+            value={filters.type || ""}
+            onChange={onFilterChange}
+            onInput={onFilterChange}
+          >
+            <option value="">All types</option>
+            <option value="expense">Expense</option>
+            <option value="income">Income</option>
+          </select>
+        </label>
+
         <label>
           <span>Category</span>
           <select
@@ -25,7 +42,7 @@ function ExpenseFilters({ filters, filteredCount, totalCount, onFilterChange, on
             onInput={onFilterChange}
           >
             <option value="">All categories</option>
-            {categories.map((category) => (
+            {allCategories.map((category) => (
               <option key={category} value={category}>
                 {category}
               </option>

@@ -75,8 +75,7 @@ function Footer() {
       <div className="footer-bottom">
         <hr className="footer-divider" />
         <p className="footer-copyright">
-          Copyright 2026 EXPENDEE | All Rights Reserved | EXPENDEE is made
-          with <span className="heart-icon">❤</span> by CHIRAG
+          Copyright 2026 EXPENDEE | All Rights Reserved | Made by CHIRAG
         </p>
       </div>
     </footer>

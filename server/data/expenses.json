@@ -30,5 +30,26 @@
     "category": "Salary",
     "date": "2026-06-01",
     "note": "Monthly Salary"
+  },
+  {
+    "id": "9e5d0844-794c-464a-8699-13bdae968051",
+    "amount": "20000",
+    "category": "Salary",
+    "date": "2026-06-18",
+    "note": ""
+  },
+  {
+    "id": "0b244a21-9475-4d53-b95a-4972b0ecf093",
+    "amount": "6000",
+    "category": "Bills",
+    "date": "2026-06-10",
+    "note": ""
+  },
+  {
+    "id": "685b2c20-6603-438d-adf5-b53876ef987b",
+    "amount": "222",
+    "category": "Food",
+    "date": "2026-06-09",
+    "note": ""
   }
 ]

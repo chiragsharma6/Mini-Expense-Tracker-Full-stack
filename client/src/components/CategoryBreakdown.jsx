@@ -1,5 +1,6 @@
 function CategoryBreakdown({ expenses, currency = "INR" }) {
-  const categoryTotals = expenses.reduce((totals, expense) => {
+  const expenseOnly = expenses.filter((item) => item.type === "expense");
+  const categoryTotals = expenseOnly.reduce((totals, expense) => {
     const category = expense.category;
     totals[category] = (totals[category] || 0) + Number(expense.amount);
     return totals;

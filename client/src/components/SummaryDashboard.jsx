@@ -1,41 +1,15 @@
 function SummaryDashboard({ expenses, currency = "INR" }) {
-  const currentDate = new Date();
+  const totalIncome = expenses
+    .filter((item) => item.type === "income")
+    .reduce((sum, item) => sum + Number(item.amount), 0);
 
-  const currentMonthExpenses = expenses.filter((expense) => {
-    const expenseDate = new Date(expense.date);
+  const totalExpense = expenses
+    .filter((item) => item.type === "expense")
+    .reduce((sum, item) => sum + Number(item.amount), 0);
 
-    return (
-      expenseDate.getMonth() === currentDate.getMonth() &&
-      expenseDate.getFullYear() === currentDate.getFullYear()
-    );
-  });
-
-  const currentMonthTotal = currentMonthExpenses.reduce(
-    (sum, expense) => sum + Number(expense.amount),
-    0
-  );
-
-  const totalSpent = expenses.reduce(
-    (sum, expense) => sum + Number(expense.amount),
-    0
-  );
-
-  const highestExpense =
-    expenses.length > 0
-      ? Math.max(...expenses.map((expense) => Number(expense.amount)))
-      : 0;
-
-  const categoryTotals = expenses.reduce((totals, expense) => {
-    const category = expense.category;
-    totals[category] = (totals[category] || 0) + Number(expense.amount);
-    return totals;
-  }, {});
-
-  const averageExpense = expenses.length > 0 ? totalSpent / expenses.length : 0;
-  const sortedCategories = Object.entries(categoryTotals).sort(
-    ([, totalA], [, totalB]) => totalB - totalA
-  );
-  const topCategory = sortedCategories[0]?.[0] || "None";
+  const netBalance = totalIncome - totalExpense;
+  const netSavings = Math.max(0, netBalance);
+  const savingsRate = totalIncome > 0 ? Math.round((netSavings / totalIncome) * 100) : 0;
 
   const formatCurrency = (amount) => {
     let locale = "en-IN";
@@ -50,27 +24,31 @@ function SummaryDashboard({ expenses, currency = "INR" }) {
 
   return (
     <div className="stat-grid">
-      <article className="stat-card stat-card-primary">
-        <span>This Month Spend</span>
-        <strong>{formatCurrency(currentMonthTotal)}</strong>
-        <small>
-          This month ({currentMonthExpenses.length} expenses)
+      <article className="stat-card stat-card-primary" style={{ backgroundColor: "var(--accent)", color: "#ffffff" }}>
+        <span>Total Income</span>
+        <strong style={{ color: "#ffffff" }}>{formatCurrency(totalIncome)}</strong>
+        <small style={{ color: "rgba(255, 255, 255, 0.85)" }}>
+          Total recorded earnings
         </small>
       </article>
       <article className="stat-card">
-        <span>Highest expense</span>
-        <strong>{formatCurrency(highestExpense)}</strong>
-        <small>Largest single transaction</small>
+        <span>Total Expense</span>
+        <strong style={{ color: "var(--rose)" }}>{formatCurrency(totalExpense)}</strong>
+        <small>Total recorded spending</small>
       </article>
       <article className="stat-card">
-        <span>Average spend</span>
-        <strong>{formatCurrency(averageExpense)}</strong>
-        <small>Per recorded expense</small>
+        <span>Net Balance</span>
+        <strong style={{ color: netBalance >= 0 ? "var(--accent)" : "var(--rose)" }}>
+          {formatCurrency(netBalance)}
+        </strong>
+        <small>Income minus Expense</small>
       </article>
       <article className="stat-card">
-        <span>Top category</span>
-        <strong>{topCategory}</strong>
-        <small>Highest category total</small>
+        <span>Net Savings</span>
+        <strong style={{ color: "var(--accent-strong)" }}>
+          {formatCurrency(netSavings)}
+        </strong>
+        <small>{savingsRate}% savings rate</small>
       </article>
     </div>
   );

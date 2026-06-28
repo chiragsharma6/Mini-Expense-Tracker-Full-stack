@@ -10,8 +10,8 @@ const budgetFilePath = path.join(__dirname, "../data/budgets.json");
 const incomeCategoriesList = ["Salary", "Freelancing", "Bonus", "Investment"];
 
 const determineType = (type, category) => {
-  if (type === "income" || type === "expense") return type;
   if (incomeCategoriesList.includes(category)) return "income";
+  if (type === "income" || type === "expense") return type;
   return "expense";
 };
 

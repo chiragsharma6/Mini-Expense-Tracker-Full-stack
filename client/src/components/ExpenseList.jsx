@@ -39,16 +39,17 @@ function ExpenseList({
 
   const handleExportCSV = () => {
     if (expenses.length === 0) {
-      alert("add expenses to download");
+      alert("add transactions to download");
       return;
     }
 
-    const headers = ["ID", "Category", "Amount", "Date", "Note"];
+    const headers = ["ID", "Type", "Category", "Amount", "Date", "Note"];
     const csvRows = [headers.join(",")];
 
     expenses.forEach((expense) => {
       const row = [
         expense.id,
+        expense.type || "expense",
         expense.category,
         expense.amount,
         expense.date,
@@ -63,7 +64,7 @@ function ExpenseList({
     
     const link = document.createElement("a");
     link.setAttribute("href", url);
-    link.setAttribute("download", `expenses_${new Date().toISOString().split("T")[0]}.csv`);
+    link.setAttribute("download", `transactions_${new Date().toISOString().split("T")[0]}.csv`);
     link.style.visibility = "hidden";
     document.body.appendChild(link);
     link.click();
@@ -75,7 +76,7 @@ function ExpenseList({
       <div className="section-heading">
         <div>
           <p className="eyebrow">Recent activity</p>
-          <h2>Expenses</h2>
+          <h2>Transactions</h2>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
           <button
@@ -112,51 +113,68 @@ function ExpenseList({
       </div>
 
       {isLoading ? (
-        <div className="empty-state">Loading expenses...</div>
+        <div className="empty-state">Loading transactions...</div>
       ) : expenses.length === 0 ? (
         <div className="empty-state">
           <strong>
-            {hasActiveFilters ? "No matching expenses" : "No expenses yet"}
+            {hasActiveFilters ? "No matching transactions" : "No transactions yet"}
           </strong>
           <span>
             {hasActiveFilters
               ? "Try changing or clearing your filters."
-              : "Add your first expense to start seeing trends."}
+              : "Add your first transaction to start seeing trends."}
           </span>
         </div>
       ) : (
         <ul className="expense-list">
-          {expenses.map((expense) => (
-            <li className="expense-row" key={expense.id}>
-              <div className="category-mark" aria-hidden="true">
-                {expense.category.slice(0, 1)}
-              </div>
-              <div className="expense-main">
-                <div>
-                  <strong>{expense.category}</strong>
-                  <span>{expense.note || "No note added"}</span>
+          {expenses.map((expense) => {
+            const isIncome = expense.type === "income";
+            return (
+              <li className="expense-row" key={expense.id}>
+                <div
+                  className="category-mark"
+                  aria-hidden="true"
+                  style={{
+                    backgroundColor: isIncome ? "var(--accent-soft)" : "var(--rose-soft)",
+                    color: isIncome ? "var(--accent-strong)" : "var(--rose)",
+                  }}
+                >
+                  {expense.category.slice(0, 1)}
                 </div>
-                <small>{formatDate(expense.date)}</small>
-              </div>
-              <div className="expense-actions">
-                <strong>{formatCurrency(expense.amount)}</strong>
-              </div>
-              <button
-                className="secondary-button"
-                onClick={() => onExpenseEdit(expense)}
-                type="button"
-              >
-                Edit
-              </button>
-              <button
-                className="ghost-button"
-                onClick={() => handleDelete(expense.id)}
-                type="button"
-              >
-                Delete
-              </button>
-            </li>
-          ))}
+                <div className="expense-main">
+                  <div>
+                    <strong>
+                      {expense.category}
+                      <span style={{ marginLeft: "8px", fontSize: "0.75rem", fontWeight: "800", padding: "2px 6px", borderRadius: "4px", backgroundColor: isIncome ? "var(--accent-soft)" : "var(--surface-soft)", color: isIncome ? "var(--accent-strong)" : "var(--muted)" }}>
+                        {isIncome ? "INCOME" : "EXPENSE"}
+                      </span>
+                    </strong>
+                    <span>{expense.note || "No note added"}</span>
+                  </div>
+                  <small>{formatDate(expense.date)}</small>
+                </div>
+                <div className="expense-actions">
+                  <strong style={{ color: isIncome ? "var(--accent-strong)" : "var(--text-strong)" }}>
+                    {isIncome ? `+ ${formatCurrency(expense.amount)}` : formatCurrency(expense.amount)}
+                  </strong>
+                </div>
+                <button
+                  className="secondary-button"
+                  onClick={() => onExpenseEdit(expense)}
+                  type="button"
+                >
+                  Edit
+                </button>
+                <button
+                  className="ghost-button"
+                  onClick={() => handleDelete(expense.id)}
+                  type="button"
+                >
+                  Delete
+                </button>
+              </li>
+            );
+          })}
         </ul>
       )}
     </section>
