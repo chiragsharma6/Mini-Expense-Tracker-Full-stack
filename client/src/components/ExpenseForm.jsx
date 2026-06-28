@@ -28,19 +28,11 @@ const getInitialFormData = (expense) => {
   };
 };
 
-const EXCHANGE_RATES = {
-  INR: 1.0,
-  USD: 83.0,
-  EUR: 90.0,
-};
-
 function ExpenseForm({
   editingExpense,
   onCancelEdit,
   onExpenseAdded,
   onExpenseUpdated,
-  currency = "INR",
-  onCurrencyChange,
 }) {
   const [formData, setFormData] = useState(() =>
     getInitialFormData(editingExpense)
@@ -49,31 +41,11 @@ function ExpenseForm({
   const [error, setError] = useState("");
   const isEditing = Boolean(editingExpense);
 
-  const prevCurrencyRef = useRef(currency);
-
   useEffect(() => {
     if (editingExpense) {
       setFormData(getInitialFormData(editingExpense));
     }
   }, [editingExpense]);
-
-  useEffect(() => {
-    const prevCurrency = prevCurrencyRef.current;
-    if (prevCurrency !== currency) {
-      if (formData.amount && !isNaN(Number(formData.amount))) {
-        const rateOld = EXCHANGE_RATES[prevCurrency];
-        const rateNew = EXCHANGE_RATES[currency];
-        const amountInINR = Number(formData.amount) * rateOld;
-        const decimals = currency === "INR" ? 0 : 2;
-        const convertedAmount = Number((amountInINR / rateNew).toFixed(decimals));
-        setFormData((prev) => ({
-          ...prev,
-          amount: String(convertedAmount),
-        }));
-      }
-      prevCurrencyRef.current = currency;
-    }
-  }, [currency, formData.amount]);
 
   const handleChange = (e) => {
     setFormData({
@@ -154,34 +126,6 @@ function ExpenseForm({
           <p className="eyebrow">{isEditing ? "Edit entry" : "New entry"}</p>
           <h2>{isEditing ? `Update ${formData.type}` : "Add transaction"}</h2>
         </div>
-        {!isEditing && onCurrencyChange && (
-          <div className="currency-selector" aria-label="Select currency">
-            <button
-              type="button"
-              className={`currency-btn ${currency === "INR" ? "active" : ""}`}
-              onClick={() => onCurrencyChange("INR")}
-              title="Rupees"
-            >
-              ₹
-            </button>
-            <button
-              type="button"
-              className={`currency-btn ${currency === "USD" ? "active" : ""}`}
-              onClick={() => onCurrencyChange("USD")}
-              title="Dollars"
-            >
-              $
-            </button>
-            <button
-              type="button"
-              className={`currency-btn ${currency === "EUR" ? "active" : ""}`}
-              onClick={() => onCurrencyChange("EUR")}
-              title="Euros"
-            >
-              €
-            </button>
-          </div>
-        )}
       </div>
 
       <div style={{ display: "flex", gap: "10px", marginBottom: "16px" }}>
