@@ -1,6 +1,7 @@
 [
   {
     "id": "afbce6cf-d78c-40ae-bc1d-c50ad2a8ffa5",
+    "type": "expense",
     "amount": 90,
     "category": "Transport",
     "date": "2026-06-05",
@@ -8,6 +9,7 @@
   },
   {
     "id": "80db18c3-a2ef-452e-b856-904b853ab189",
+    "type": "expense",
     "amount": 99.999,
     "category": "Bills",
     "date": "2026-06-04",
@@ -15,9 +17,18 @@
   },
   {
     "id": "d346165d-4b34-41b0-98fd-f7054e51f341",
+    "type": "expense",
     "amount": 199.998,
     "category": "Transport",
     "date": "2026-06-02",
     "note": ""
+  },
+  {
+    "id": "90cf3bf6-a82d-4542-b9b7-8108db388dd8",
+    "type": "income",
+    "amount": 50000,
+    "category": "Salary",
+    "date": "2026-06-01",
+    "note": "Monthly Salary"
   }
 ]

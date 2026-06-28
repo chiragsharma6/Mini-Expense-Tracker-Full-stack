@@ -9,6 +9,7 @@ app.use(express.json());
 const expenseRoutes = require("./routes/expenseRoutes");
 
 app.use("/expenses", expenseRoutes);
+app.use("/", expenseRoutes);
 
 const PORT = 5001;
 

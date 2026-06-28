@@ -13,13 +13,16 @@ ChartJS.register(
   Legend
 );
 
-function ExpensePieChart({ expenses }) {
+function ExpensePieChart({ expenses, theme }) {
   const categoryTotals = expenses.reduce((acc, expense) => {
     acc[expense.category] =
       (acc[expense.category] || 0) + Number(expense.amount);
 
     return acc;
   }, {});
+
+  const isDark = theme === "dark";
+  const textColor = isDark ? "#e2e8f0" : "#2c3830";
 
   const data = {
     labels: Object.keys(categoryTotals),
@@ -35,8 +38,28 @@ function ExpensePieChart({ expenses }) {
           "#0891b2", // Ocean Cyan
           "#4f46e5", // Electric Indigo
         ],
+        borderWidth: isDark ? 2 : 1,
+        borderColor: isDark ? "#172420" : "#ffffff",
       },
     ],
+  };
+
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "bottom",
+        labels: {
+          color: textColor,
+          font: {
+            family: "'Plus Jakarta Sans', sans-serif",
+            size: 13,
+            weight: "600",
+          },
+          padding: 16,
+        },
+      },
+    },
   };
 
   if (expenses.length === 0) {
@@ -65,9 +88,9 @@ function ExpensePieChart({ expenses }) {
         </div>
       </div>
 
-     <div style={{ maxWidth: "420px", margin: "0 auto" }}>
-  <Pie data={data} />
-</div>
+      <div style={{ maxWidth: "420px", margin: "0 auto", padding: "12px 0" }}>
+        <Pie data={data} options={options} />
+      </div>
     </div>
   );
 }

@@ -2,32 +2,42 @@ import { useEffect, useState, useRef } from "react";
 import ExpenseForm from "./components/ExpenseForm";
 import ExpenseFilters from "./components/ExpenseFilters";
 import ExpenseList from "./components/ExpenseList";
-import { getExpenses, updateExpense } from "./services/expenseService";
+import { getExpenses } from "./services/expenseService";
 import SummaryDashboard from "./components/SummaryDashboard";
 import ExpensePieChart from "./components/ExpensePieChart";
 import CategoryBreakdown from "./components/CategoryBreakdown";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
+
 const emptyFilters = {
+  type: "",
   category: "",
   startDate: "",
   endDate: "",
 };
 
-const EXCHANGE_RATES = {
-  INR: 1.0,
-  USD: 83.0,
-  EUR: 90.0,
-};
-
 function App() {
+  const [theme, setTheme] = useState(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) return savedTheme;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === "light" ? "dark" : "light"));
+  };
+
   const [expenses, setExpenses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [editingExpense, setEditingExpense] = useState(null);
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
-  const [currentCurrency, setCurrentCurrency] = useState("INR");
   const followerRef = useRef(null);
 
   useEffect(() => {
@@ -75,39 +85,6 @@ function App() {
   
   const [filters, setFilters] = useState(emptyFilters);
 
-  const handleCurrencyChange = async (newCurrency) => {
-    if (newCurrency === currentCurrency) return;
-
-    const rateOld = EXCHANGE_RATES[currentCurrency];
-    const rateNew = EXCHANGE_RATES[newCurrency];
-
-    const convertedExpenses = expenses.map((expense) => {
-      const amountInINR = Number(expense.amount) * rateOld;
-      const convertedAmount = Number((amountInINR / rateNew).toFixed(4));
-      return {
-        ...expense,
-        amount: convertedAmount,
-      };
-    });
-
-    try {
-      setIsLoading(true);
-      await Promise.all(
-        convertedExpenses.map((exp) => updateExpense(exp.id, exp))
-      );
-      setExpenses(convertedExpenses);
-      setCurrentCurrency(newCurrency);
-      setNotice(`Switched to ${newCurrency}. All values converted.`);
-      window.setTimeout(() => setNotice(""), 2200);
-    } catch (err) {
-      console.error("Failed to convert currency:", err);
-      setError("Unable to convert expenses on the server. Please try again.");
-      window.setTimeout(() => setError(""), 3000);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 40) {
@@ -120,16 +97,16 @@ function App() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-  const hasActiveFilters = filters.category || filters.startDate || filters.endDate;
+
+  const hasActiveFilters = filters.type || filters.category || filters.startDate || filters.endDate;
 
   const filteredExpenses = expenses.filter((expense) => {
-    const matchesCategory =
-      !filters.category || expense.category === filters.category;
-    const matchesStartDate =
-      !filters.startDate || expense.date >= filters.startDate;
+    const matchesType = !filters.type || expense.type === filters.type;
+    const matchesCategory = !filters.category || expense.category === filters.category;
+    const matchesStartDate = !filters.startDate || expense.date >= filters.startDate;
     const matchesEndDate = !filters.endDate || expense.date <= filters.endDate;
 
-    return matchesCategory && matchesStartDate && matchesEndDate;
+    return matchesType && matchesCategory && matchesStartDate && matchesEndDate;
   }).sort((a, b) => b.date.localeCompare(a.date));
 
   const fetchExpenses = async () => {
@@ -170,17 +147,33 @@ function App() {
     };
   }, []);
 
-  const handleExpenseAdded = async () => {
-    await fetchExpenses();
-    setNotice("Expense added");
-    window.setTimeout(() => setNotice(""), 2200);
+  const handleExpenseAdded = (newExpense) => {
+    if (newExpense) {
+      setExpenses((prev) => [newExpense, ...prev.filter((x) => x.id !== newExpense.id)]);
+    }
+    fetchExpenses();
+    const msg = newExpense && newExpense.type === "income" ? "Income added successfully!" : "Expense added successfully!";
+    setNotice(msg);
+    window.setTimeout(() => setNotice(""), 1000);
   };
 
-  const handleExpenseUpdated = async () => {
-    await fetchExpenses();
+  const handleExpenseUpdated = (updatedExpense) => {
+    if (updatedExpense) {
+      setExpenses((prev) =>
+        prev.map((x) => (x.id === updatedExpense.id ? updatedExpense : x))
+      );
+    }
     setEditingExpense(null);
-    setNotice("Expense updated");
-    window.setTimeout(() => setNotice(""), 2200);
+    fetchExpenses();
+    setNotice("Transaction updated successfully!");
+    window.setTimeout(() => setNotice(""), 1000);
+  };
+
+  const handleExpenseDeleted = (deletedId) => {
+    if (deletedId) {
+      setExpenses((prev) => prev.filter((x) => x.id !== deletedId));
+    }
+    fetchExpenses();
   };
 
   const handleFilterChange = (e) => {
@@ -192,10 +185,19 @@ function App() {
 
   return (
     <>
-      <Navbar />
+      <Navbar theme={theme} toggleTheme={toggleTheme} />
       <div ref={followerRef} className="cursor-follower-wrapper">
         <div className="cursor-follower-circle hidden" />
       </div>
+
+      {notice && (
+        <div className="screen-popup-overlay">
+          <div className="screen-popup-card">
+            <p className="screen-popup-text">{notice}</p>
+          </div>
+        </div>
+      )}
+
       <main className="app-shell">
         <div className="first-page">
         <header className="hero">
@@ -212,7 +214,6 @@ function App() {
           </div>
         </header>
 
-        {notice && <div className="notice">{notice}</div>}
         {error && <div className="notice notice-error">{error}</div>}
 
         <ExpenseForm
@@ -221,11 +222,9 @@ function App() {
           onCancelEdit={() => setEditingExpense(null)}
           onExpenseAdded={handleExpenseAdded}
           onExpenseUpdated={handleExpenseUpdated}
-          currency={currentCurrency}
-          onCurrencyChange={handleCurrencyChange}
         />
 
-        <SummaryDashboard expenses={filteredExpenses} currency={currentCurrency} />
+        <SummaryDashboard expenses={filteredExpenses} />
 
         <div className={`scroll-indicator ${!showScrollIndicator ? "scroll-indicator-hidden" : ""}`}>
           <span>Scroll down for insights & activity</span>
@@ -243,18 +242,17 @@ function App() {
           onClearFilters={() => setFilters(emptyFilters)}
           onFilterChange={handleFilterChange}
         />
-        <ExpensePieChart expenses={filteredExpenses} />
+        <ExpensePieChart expenses={filteredExpenses} theme={theme} />
       </div>
 
-      <CategoryBreakdown expenses={filteredExpenses} currency={currentCurrency} />
+      <CategoryBreakdown expenses={filteredExpenses} />
 
       <ExpenseList
         expenses={filteredExpenses}
         hasActiveFilters={Boolean(hasActiveFilters)}
         isLoading={isLoading}
-        onExpenseDeleted={fetchExpenses}
+        onExpenseDeleted={handleExpenseDeleted}
         onExpenseEdit={setEditingExpense}
-        currency={currentCurrency}
       />
 
       <Footer />
