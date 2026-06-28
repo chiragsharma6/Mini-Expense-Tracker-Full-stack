@@ -17,21 +17,6 @@ const emptyFilters = {
 };
 
 function App() {
-  const [theme, setTheme] = useState(() => {
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme) return savedTheme;
-    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-  });
-
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-    localStorage.setItem("theme", theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === "light" ? "dark" : "light"));
-  };
-
   const [expenses, setExpenses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -185,7 +170,7 @@ function App() {
 
   return (
     <>
-      <Navbar theme={theme} toggleTheme={toggleTheme} />
+      <Navbar />
       <div ref={followerRef} className="cursor-follower-wrapper">
         <div className="cursor-follower-circle hidden" />
       </div>
@@ -242,7 +227,7 @@ function App() {
           onClearFilters={() => setFilters(emptyFilters)}
           onFilterChange={handleFilterChange}
         />
-        <ExpensePieChart expenses={filteredExpenses} theme={theme} />
+        <ExpensePieChart expenses={filteredExpenses} />
       </div>
 
       <CategoryBreakdown expenses={filteredExpenses} />
