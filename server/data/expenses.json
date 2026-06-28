@@ -51,5 +51,12 @@
     "category": "Food",
     "date": "2026-06-09",
     "note": ""
+  },
+  {
+    "id": "22b462ad-40fa-4161-906a-ec3b427e95ba",
+    "amount": "2000",
+    "category": "Bills",
+    "date": "2026-06-09",
+    "note": ""
   }
 ]
