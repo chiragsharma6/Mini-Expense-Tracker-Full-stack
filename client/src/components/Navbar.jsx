@@ -1,23 +1,7 @@
 import { useEffect, useState } from "react";
 
 function Navbar() {
-  const [isSticky, setIsSticky] = useState(false);
   const [showToast, setShowToast] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 80) {
-        setIsSticky(true);
-      } else {
-        setIsSticky(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
 
   const handleLinkClick = (e) => {
     e.preventDefault();
@@ -35,7 +19,7 @@ function Navbar() {
 
   return (
     <>
-      <nav className={`navbar-sticky ${isSticky ? "navbar-visible" : ""}`}>
+      <nav className="navbar-sticky navbar-visible">
         <div className="navbar-content">
           <div className="navbar-left">
             <div className="navbar-logo" aria-label="EXPENDEE Logo">
