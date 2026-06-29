@@ -3,6 +3,8 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 const Expense = require("./models/Expense");
+const authRoutes = require("./routes/authRoutes");
+
 
 dotenv.config();
 
@@ -13,6 +15,10 @@ app.use(express.json());
 
 const expenseRoutes = require("./routes/expenseRoutes");
 
+app.use("/auth", authRoutes);
+app.get("/hello", (req, res) => {
+  res.send("Hello from Express");
+});
 app.use("/expenses", expenseRoutes);
 app.use("/", expenseRoutes);
 
