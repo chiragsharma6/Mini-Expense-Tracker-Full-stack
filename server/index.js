@@ -2,10 +2,9 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
+const Expense = require("./models/Expense");
 
 dotenv.config();
-
-connectDB();
 
 const app = express();
 
@@ -19,6 +18,19 @@ app.use("/", expenseRoutes);
 
 const PORT = process.env.PORT || 5001;
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-});
+const startServer = async () => {
+  try {
+    await connectDB();
+
+    const count = await Expense.countDocuments();
+    console.log(`📦 Expenses in MongoDB: ${count}`);
+
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+startServer();
