@@ -1,3 +1,5 @@
+import { Routes, Route, Navigate } from "react-router-dom";
+import useAuth from "./hooks/useAuth";
 import { useEffect, useState, useRef } from "react";
 import ExpenseForm from "./components/ExpenseForm";
 import ExpenseFilters from "./components/ExpenseFilters";
@@ -8,6 +10,8 @@ import ExpensePieChart from "./components/ExpensePieChart";
 import MonthlyBudget from "./components/MonthlyBudget";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 const emptyFilters = {
   type: "",
@@ -16,7 +20,8 @@ const emptyFilters = {
   endDate: "",
 };
 
-function App() {
+function DashboardView() {
+  const { user } = useAuth();
   const [expenses, setExpenses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -67,7 +72,7 @@ function App() {
       document.removeEventListener("mouseenter", handleMouseEnter);
     };
   }, []);
-  
+
   const [filters, setFilters] = useState(emptyFilters);
 
   useEffect(() => {
@@ -100,54 +105,32 @@ function App() {
       setExpenses(data);
       setError("");
     } catch (err) {
-      console.error(err);
-      setError("Unable to load expenses. Make sure the server is running.");
+      setError(err.message || "Failed to load expenses");
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    let isMounted = true;
-
-    getExpenses()
-      .then((data) => {
-        if (!isMounted) return;
-        setExpenses(data);
-        setError("");
-      })
-      .catch((err) => {
-        if (!isMounted) return;
-        console.error(err);
-        setError("Unable to load expenses. Make sure the server is running.");
-      })
-      .finally(() => {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  const handleExpenseAdded = (newExpense) => {
-    if (newExpense) {
-      setExpenses((prev) => [newExpense, ...prev.filter((x) => x.id !== newExpense.id)]);
+    if (user) {
+      fetchExpenses();
+    } else {
+      setExpenses([]);
     }
+  }, [user]);
+
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  const handleExpenseAdded = () => {
     fetchExpenses();
-    const msg = newExpense && newExpense.type === "income" ? "Income added successfully!" : "Expense added successfully!";
-    setNotice(msg);
+    setNotice("Transaction added successfully!");
     window.setTimeout(() => setNotice(""), 1000);
   };
 
-  const handleExpenseUpdated = (updatedExpense) => {
-    if (updatedExpense) {
-      setExpenses((prev) =>
-        prev.map((x) => (x.id === updatedExpense.id ? updatedExpense : x))
-      );
-    }
+  const handleExpenseUpdated = () => {
     setEditingExpense(null);
     fetchExpenses();
     setNotice("Transaction updated successfully!");
@@ -185,64 +168,75 @@ function App() {
 
       <main className="app-shell">
         <div className="first-page">
-        <header className="hero">
-          <div>
-            <p className="eyebrow">Personal finance</p>
-            <h1 className="brand-title">EXPENDEE</h1>
-            <p className="hero-copy">
-              Expense Tracker — Spend smarter. Save better. Grow faster.
-            </p>
+          <header className="hero">
+            <div>
+              <p className="eyebrow">Personal finance</p>
+              <h1 className="brand-title">EXPENDEE</h1>
+              <p className="hero-copy">
+                Expense Tracker — Spend smarter. Save better. Grow faster.
+              </p>
+            </div>
+            <div className="hero-badge" aria-label={`${expenses.length} recorded expenses`}>
+              <span>{expenses.length}</span>
+              <small>records</small>
+            </div>
+          </header>
+
+          {error && <div className="notice notice-error">{error}</div>}
+
+          <ExpenseForm
+            key={editingExpense ? editingExpense.id : "new-expense"}
+            editingExpense={editingExpense}
+            onCancelEdit={() => setEditingExpense(null)}
+            onExpenseAdded={handleExpenseAdded}
+            onExpenseUpdated={handleExpenseUpdated}
+          />
+
+          <SummaryDashboard expenses={expenses} />
+
+          <div className={`scroll-indicator ${!showScrollIndicator ? "scroll-indicator-hidden" : ""}`}>
+            <span>Scroll down for insights & activity</span>
+            <svg className="scroll-arrow" viewBox="0 0 24 24" width="16" height="16">
+              <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
+            </svg>
           </div>
-          <div className="hero-badge" aria-label={`${expenses.length} recorded expenses`}>
-            <span>{expenses.length}</span>
-            <small>records</small>
-          </div>
-        </header>
-
-        {error && <div className="notice notice-error">{error}</div>}
-
-        <ExpenseForm
-          key={editingExpense ? editingExpense.id : "new-expense"}
-          editingExpense={editingExpense}
-          onCancelEdit={() => setEditingExpense(null)}
-          onExpenseAdded={handleExpenseAdded}
-          onExpenseUpdated={handleExpenseUpdated}
-        />
-
-        <SummaryDashboard expenses={expenses} />
-
-        <div className={`scroll-indicator ${!showScrollIndicator ? "scroll-indicator-hidden" : ""}`}>
-          <span>Scroll down for insights & activity</span>
-          <svg className="scroll-arrow" viewBox="0 0 24 24" width="16" height="16">
-            <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
-          </svg>
         </div>
-      </div>
 
-      <div className="side-by-side-grid">
-        <ExpenseFilters
-          filters={filters}
-          filteredCount={filteredExpenses.length}
-          totalCount={expenses.length}
-          onClearFilters={() => setFilters(emptyFilters)}
-          onFilterChange={handleFilterChange}
+        <div className="side-by-side-grid">
+          <ExpenseFilters
+            filters={filters}
+            filteredCount={filteredExpenses.length}
+            totalCount={expenses.length}
+            onClearFilters={() => setFilters(emptyFilters)}
+            onFilterChange={handleFilterChange}
+          />
+          <ExpensePieChart expenses={filteredExpenses} />
+        </div>
+
+        <MonthlyBudget expenses={expenses} />
+
+        <ExpenseList
+          expenses={filteredExpenses}
+          hasActiveFilters={Boolean(hasActiveFilters)}
+          isLoading={isLoading}
+          onExpenseDeleted={handleExpenseDeleted}
+          onExpenseEdit={setEditingExpense}
         />
-        <ExpensePieChart expenses={filteredExpenses} />
-      </div>
 
-      <MonthlyBudget expenses={expenses} />
-
-      <ExpenseList
-        expenses={filteredExpenses}
-        hasActiveFilters={Boolean(hasActiveFilters)}
-        isLoading={isLoading}
-        onExpenseDeleted={handleExpenseDeleted}
-        onExpenseEdit={setEditingExpense}
-      />
-
-      <Footer />
-    </main>
+        <Footer />
+      </main>
     </>
+  );
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<DashboardView />} />
+      <Route path="/login" element={<><Navbar /><Login /><Footer /></>} />
+      <Route path="/register" element={<><Navbar /><Register /><Footer /></>} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }
 

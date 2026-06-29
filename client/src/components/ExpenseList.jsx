@@ -30,12 +30,12 @@ function ExpenseList({
   const handleDelete = async (id) => {
     try {
       await deleteExpense(id);
-
-      onExpenseDeleted();
+      onExpenseDeleted(id);
     } catch (error) {
       console.error(error);
     }
   };
+
 
   const handleExportCSV = () => {
     if (expenses.length === 0) {
@@ -129,8 +129,9 @@ function ExpenseList({
         <ul className="expense-list">
           {expenses.map((expense) => {
             const isIncome = expense.type === "income";
+            const expenseId = expense.id || expense._id;
             return (
-              <li className="expense-row" key={expense.id}>
+              <li className="expense-row" key={expenseId}>
                 <div
                   className="category-mark"
                   aria-hidden="true"
@@ -167,13 +168,14 @@ function ExpenseList({
                 </button>
                 <button
                   className="ghost-button"
-                  onClick={() => handleDelete(expense.id)}
+                  onClick={() => handleDelete(expenseId)}
                   type="button"
                 >
                   Delete
                 </button>
               </li>
             );
+
           })}
         </ul>
       )}

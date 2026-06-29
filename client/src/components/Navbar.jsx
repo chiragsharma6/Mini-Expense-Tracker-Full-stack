@@ -1,11 +1,20 @@
 import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 
 function Navbar() {
   const [showToast, setShowToast] = useState(false);
+  const { user, logout, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   const handleLinkClick = (e) => {
     e.preventDefault();
     setShowToast(true);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
   };
 
   useEffect(() => {
@@ -22,7 +31,7 @@ function Navbar() {
       <nav className="navbar-sticky navbar-visible">
         <div className="navbar-content">
           <div className="navbar-left">
-            <div className="navbar-logo" aria-label="EXPENDEE Logo">
+            <Link to="/" className="navbar-logo" aria-label="EXPENDEE Logo">
               <svg
                 width="34"
                 height="34"
@@ -51,7 +60,7 @@ function Navbar() {
                 </text>
               </svg>
               <span className="navbar-brand-name">EXPENDEE</span>
-            </div>
+            </Link>
           </div>
 
           <div className="navbar-right">
@@ -66,7 +75,32 @@ function Navbar() {
               </li>
               <li><a href="#blog" onClick={handleLinkClick}>Blog</a></li>
               <li className="nav-divider" aria-hidden="true">|</li>
-              <li><a href="#login" className="nav-login-btn" onClick={handleLinkClick}>Login</a></li>
+
+              {isAuthenticated ? (
+                <>
+                  <li className="nav-user-greeting">
+                    <span>Hi, {user?.name || "User"}</span>
+                  </li>
+                  <li>
+                    <button onClick={handleLogout} className="nav-logout-btn">
+                      Logout
+                    </button>
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li>
+                    <Link to="/login" className="nav-login-btn">
+                      Login
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/register" className="nav-register-btn">
+                      Register
+                    </Link>
+                  </li>
+                </>
+              )}
             </ul>
           </div>
         </div>
@@ -84,3 +118,4 @@ function Navbar() {
 }
 
 export default Navbar;
+
