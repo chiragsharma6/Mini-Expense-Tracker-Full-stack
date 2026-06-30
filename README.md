@@ -24,7 +24,7 @@ Built as part of the Studio Graphene Full Stack Developer Assessment (Exercise 2
 
 ## Live Demo Links
 
-https://mini-expense-tracker-full-stack.vercel.app/
+https://mini-expense-tracker-full-stack-h5l.vercel.app/
 
 ---
 
