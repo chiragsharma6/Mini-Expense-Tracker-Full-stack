@@ -65,21 +65,28 @@ function Navbar() {
 
           <div className="navbar-right">
             <ul className="navbar-links">
-              <li><a href="#pricing" onClick={handleLinkClick}>Pricing</a></li>
+              <li className="nav-link-optional">
+
+                <a href="#pricing" onClick={handleLinkClick}>Pricing</a>
+              </li>
               <li className="nav-link-optional">
                 <a href="#bank-connect" onClick={handleLinkClick}>Bank Connect</a>
               </li>
-              <li><a href="#help" onClick={handleLinkClick}>Help</a></li>
+              <li className="nav-link-optional">
+                <a href="#help" onClick={handleLinkClick}>Help</a>
+              </li>
               <li className="nav-link-optional">
                 <a href="#about-us" onClick={handleLinkClick}>About us</a>
               </li>
-              <li><a href="#blog" onClick={handleLinkClick}>Blog</a></li>
-              <li className="nav-divider" aria-hidden="true">|</li>
+              <li className="nav-link-optional">
+                <a href="#blog" onClick={handleLinkClick}>Blog</a>
+              </li>
+              <li className="nav-divider nav-link-optional" aria-hidden="true">|</li>
 
               {isAuthenticated ? (
                 <>
                   <li className="nav-user-greeting">
-                    <span>Hi, {user?.name || "User"}</span>
+                    <span>Hi, {user?.name ? user.name.split(" ")[0] : "User"}</span>
                   </li>
                   <li>
                     <button onClick={handleLogout} className="nav-logout-btn">
@@ -101,6 +108,7 @@ function Navbar() {
                   </li>
                 </>
               )}
+
             </ul>
           </div>
         </div>

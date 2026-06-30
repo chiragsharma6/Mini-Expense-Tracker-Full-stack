@@ -1,15 +1,18 @@
 import axios from "axios";
 
-const isLocal = typeof window !== "undefined" && (
-  window.location.hostname === "localhost" ||
-  window.location.hostname === "127.0.0.1" ||
-  window.location.port === "5173" ||
-  window.location.port === "5174"
-);
 
-const API_URL = isLocal
-  ? "http://localhost:5001/expenses"
-  : "https://mini-expense-tracker-full-stack.onrender.com/expenses";
+// const isLocal = typeof window !== "undefined" && (
+//   window.location.hostname === "localhost" ||
+//   window.location.hostname === "127.0.0.1" ||
+//   window.location.port === "5173" ||
+//   window.location.port === "5174"
+// );
+
+// const API_URL = isLocal
+//   ? "http://localhost:5001/expenses"
+//   : "https://mini-expense-tracker-full-stack.onrender.com/expenses";
+
+const API_URL = `${import.meta.env.VITE_API_URL}/expenses`;
 
 const getAuthConfig = () => {
   const token = localStorage.getItem("token");

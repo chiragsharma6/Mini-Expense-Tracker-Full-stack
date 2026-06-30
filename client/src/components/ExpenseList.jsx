@@ -159,20 +159,22 @@ function ExpenseList({
                     {isIncome ? `+ ${formatCurrency(expense.amount)}` : formatCurrency(expense.amount)}
                   </strong>
                 </div>
-                <button
-                  className="secondary-button"
-                  onClick={() => onExpenseEdit(expense)}
-                  type="button"
-                >
-                  Edit
-                </button>
-                <button
-                  className="ghost-button"
-                  onClick={() => handleDelete(expenseId)}
-                  type="button"
-                >
-                  Delete
-                </button>
+                <div className="expense-row-actions">
+                  <button
+                    className="secondary-button"
+                    onClick={() => onExpenseEdit(expense)}
+                    type="button"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="ghost-button"
+                    onClick={() => handleDelete(expenseId)}
+                    type="button"
+                  >
+                    Delete
+                  </button>
+                </div>
               </li>
             );
 
